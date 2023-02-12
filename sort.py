@@ -20,7 +20,7 @@ from __future__ import print_function
 import os
 import numpy as np
 import matplotlib
-matplotlib.use('TkAgg')
+# matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from skimage import io
@@ -243,14 +243,15 @@ class Sort(object):
     for trk in reversed(self.trackers):
         d = trk.get_state()[0]
         if (trk.time_since_update < 1) and (trk.hit_streak >= self.min_hits or self.frame_count <= self.min_hits):
-          ret.append(np.concatenate((d,[trk.id+1])).reshape(1,-1)) # +1 as MOT benchmark requires positive
+          ret.append(np.concatenate((d, trk.kf.x[4:6, 0], [trk.id+1])).reshape(1, -1))  # +1 as MOT benchmark requires positive
         i -= 1
         # remove dead tracklet
         if(trk.time_since_update > self.max_age):
           self.trackers.pop(i)
-    if(len(ret)>0):
+
+    if len(ret) > 0:
       return np.concatenate(ret)
-    return np.empty((0,5))
+    return np.empty((0, 7))
 
 def parse_args():
     """Parse input arguments."""
