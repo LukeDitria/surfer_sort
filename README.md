@@ -1,6 +1,6 @@
 Surfer SORT
 =====
-The origional "SORT" class has been modified to also return predicted velocities
+The original "SORT" class has been modified to also return predicted velocities
 
 Added scripts <br>
 - track_extract.py <br>
