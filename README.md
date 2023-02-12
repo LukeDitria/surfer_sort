@@ -1,3 +1,23 @@
+Surfer SORT
+=====
+The origional "SORT" class has been modified to also return predicted velocities
+
+Added scripts <br>
+- track_extract.py <br>
+    "extract_tracks" function uses "SORT" algorithm to extract trajectories from raw csv data file and returns trajectories dictionary
+    
+- trajectory_extractor.py <br>
+    Run this script to walk through nested dictionaries and convert raw data csvs into trajectories (using "extract_tracks" function) and save them as jsons in a replicated dictionary tree <br>
+    e.g.  <br>
+    python3 trajectory_extractor.py -srd data -svd data_out <br>
+    Where "data" is the root directory of the current data and "data_out" is the new root directory where the outputs will be saved.
+    
+- read_data.py <br>
+    This is an example script of how to read the saved json files that contain the trajectories and do some basic processing <br>
+    e.g.  <br>
+    python3 read_data_eg.py -dp data_out/data/au-currumbin4k_stream_20200608T000955960_detections.json <br>
+    
+
 SORT
 =====
 
