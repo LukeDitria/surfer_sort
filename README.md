@@ -12,7 +12,7 @@ Added scripts <br>
     python3 trajectory_extractor.py -srd data -svd data_out <br>
     Where "data" is the root directory of the current data and "data_out" is the new root directory where the outputs will be saved.
     
-- read_data.py <br>
+- read_data_eg.py <br>
     This is an example script of how to read the saved json files that contain the trajectories and do some basic processing <br>
     e.g.  <br>
     python3 read_data_eg.py -dp data_out/data/au-currumbin4k_stream_20200608T000955960_detections.json <br>
