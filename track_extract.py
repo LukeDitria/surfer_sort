@@ -60,6 +60,13 @@ def extract_tracks(data_csv, max_age=10, iou_threshold=0.1, bb_size=(128, 64), f
             # Get confidence
             score = frame_detections["confidence"].to_numpy()
 
+            # Get the original bounding boxes to save
+            original_bbox = np.stack([frame_detections["x0"].to_numpy() * frame_size[0],
+                                      frame_detections["y0"].to_numpy() * frame_size[1],
+                                      frame_detections["x1"].to_numpy() * frame_size[0],
+                                      frame_detections["y1"].to_numpy() * frame_size[1]],
+                                     1).astype(int)
+
             # "Inflate bounding box, to improve likelihood of intersection"
             # Use centroid positions to create larger BB of points --> [x0,y0,x1,y1]
             detections = np.stack([centroid_x - bb_size[0] // 2,
@@ -71,28 +78,30 @@ def extract_tracks(data_csv, max_age=10, iou_threshold=0.1, bb_size=(128, 64), f
         else:
             # Even if there are no detections we need to sill tell the tracker, so pass an empty array
             detections = np.empty((0, 5))
+            original_bbox = np.empty((0, 5))
 
         # Update the tracker with the detections
-        tracks_ = mot_tracker.update(detections)
+        tracks_, det_indices = mot_tracker.update(detections)
 
         # If the tracker thinks that any of the current detections correspond to an object it has already seen, it
         # will return the predicted position of those objects (as well as the object ID number)
 
         # We log the positions of each unique ID number to build up the trajectory
-        for track in tracks_:
+        for track, det in zip(tracks_, original_bbox[det_indices]):
             timestamp = frame_detections["timestamp"].to_numpy()[0]
 
             # The last value is the ID
             id = int(track[-1])
             bbox = track[:4].tolist()
             velocities = track[4:6].tolist()
+            real_bbox = det.astype(int)
 
             centroid = [bbox[0] + (bbox[2] - bbox[0]) / 2,
                         bbox[1] + (bbox[3] - bbox[1]) / 2]
 
             # Add the new data point to the trajectory
             trajectory_logger[id]["timestamps"].append(timestamp)
-            trajectory_logger[id]["bounding_boxes"].append(bbox)
+            trajectory_logger[id]["bounding_boxes"].append(real_bbox)
             trajectory_logger[id]["centroid"].append(centroid)
             trajectory_logger[id]["velocities"].append(velocities)
 
