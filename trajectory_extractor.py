@@ -29,6 +29,9 @@ if __name__ == '__main__':
                 file_path = os.path.join(root, file)
                 file_type = file.split(".")[-1]
 
+                if not file.split(".")[-2] == "detections":
+                    continue
+
                 new_file_name = "_".join(file.split(".")[:-1]) + ".json"
                 new_file_path = os.path.join(sub_dir, new_file_name)
 

@@ -266,7 +266,7 @@ class Sort(object):
     if len(ret) > 0:
       return np.concatenate(ret), det_indx
 
-    return np.empty((0, 7)), 0
+    return np.empty((0, 7)), []
 
 
 def parse_args():

@@ -86,27 +86,28 @@ def extract_tracks(data_csv, max_age=10, iou_threshold=0.1, bb_size=(128, 64), f
         # If the tracker thinks that any of the current detections correspond to an object it has already seen, it
         # will return the predicted position of those objects (as well as the object ID number)
 
-        # We log the positions of each unique ID number to build up the trajectory
-        for track, det in zip(tracks_, original_bbox[det_indices]):
-            timestamp = frame_detections["timestamp"].to_numpy()[0]
+        if len(det_indices) > 0:
+            # We log the positions of each unique ID number to build up the trajectory
+            for track, det in zip(tracks_, original_bbox[det_indices]):
+                timestamp = frame_detections["timestamp"].to_numpy()[0]
 
-            # The last value is the ID
-            id = int(track[-1])
-            bbox = track[:4].tolist()
-            velocities = track[4:6].tolist()
-            real_bbox = det.astype(int)
+                # The last value is the ID
+                id = int(track[-1])
+                bbox = track[:4].tolist()
+                velocities = track[4:6].tolist()
+                real_bbox = det.astype(int).tolist()
 
-            centroid = [bbox[0] + (bbox[2] - bbox[0]) / 2,
-                        bbox[1] + (bbox[3] - bbox[1]) / 2]
+                centroid = [bbox[0] + (bbox[2] - bbox[0]) / 2,
+                            bbox[1] + (bbox[3] - bbox[1]) / 2]
 
-            # Add the new data point to the trajectory
-            trajectory_logger[id]["timestamps"].append(timestamp)
-            trajectory_logger[id]["bounding_boxes"].append(real_bbox)
-            trajectory_logger[id]["centroid"].append(centroid)
-            trajectory_logger[id]["velocities"].append(velocities)
+                # Add the new data point to the trajectory
+                trajectory_logger[id]["timestamps"].append(timestamp)
+                trajectory_logger[id]["bounding_boxes"].append(real_bbox)
+                trajectory_logger[id]["centroid"].append(centroid)
+                trajectory_logger[id]["velocities"].append(velocities)
 
-            # Increment the number of detections for this object
-            trajectory_logger[id]["number_of_detections"] += 1
+                # Increment the number of detections for this object
+                trajectory_logger[id]["number_of_detections"] += 1
 
     # Return the dictionary of trajectories
     return trajectory_logger
